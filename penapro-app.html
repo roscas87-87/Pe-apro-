@@ -1500,22 +1500,6 @@ let EQUIPO_ID = (()=>{
 })();
 const R = path => ref(db, `equipos/${EQUIPO_ID}/${path}`);
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, push, remove, update, onValue }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCcoVMjTkWhIDaLS-fg1WgDnHo8eq97knU",
-  authDomain: "pena3tiempo.firebaseapp.com",
-  databaseURL: "https://pena3tiempo-default-rtdb.firebaseio.com",
-  projectId: "pena3tiempo",
-  storageBucket: "pena3tiempo.firebasestorage.app",
-  messagingSenderId: "933315277467",
-  appId: "1:933315277467:web:5afbf225a5dddd82180c3e"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
 // ── STATE ──────────────────────────────────────────────
 let S = { players:{}, matches:{}, activeMatch:null, config:{},
           events:[], caja:[], news:[], votes:{}, chat:[], seasons:[], convocatorias:{} };
@@ -3236,7 +3220,7 @@ function showWelcomeScreen_OLD(){
 
     <div style="width:100%;max-width:360px;background:#0e1c30;border:1px solid rgba(200,255,0,.25);border-radius:20px;padding:22px;margin-bottom:14px">
       <div style="font-size:13px;font-weight:700;color:#c8ff00;margin-bottom:14px">¿Ya tienes código de equipo?</div>
-      <input id="wl-codigo" type="text" placeholder="Código (ej: pena3tiempo)" autocomplete="off"
+      <input id="wl-codigo" type="text" placeholder="Código del equipo..." autocomplete="off"
         style="width:100%;background:#162540;border:1px solid rgba(200,255,0,.3);border-radius:10px;padding:12px 14px;color:#e8f0fe;font-size:15px;font-family:Inter,sans-serif;outline:none;margin-bottom:12px;text-transform:lowercase;box-sizing:border-box"
         onkeydown="if(event.key==='Enter')wlEntrar()">
       <button onclick="wlEntrar()" style="width:100%;padding:13px;background:linear-gradient(135deg,#c8ff00,#a8e000);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">
