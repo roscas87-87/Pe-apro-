@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#05060a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PeñaPro · Tesorero">
+<title>PeñaPro · Tesorero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #05060a;
+  --bg2:  #0c0e14;
+  --bg3:  #131620;
+  --bg4:  #1a1e2e;
+  --ac:   #c8ff00;
+  --gold: #ffd600;
+  --red:  #ff1744;
+  --blue: #00b0ff;
+  --green:#00e676;
+  --tx:   #f2f2f2;
+  --tx2:  #8a8fa8;
+  --tx3:  #454a60;
+  --b:    rgba(255,255,255,.07);
+  --r:    14px;
+  --r2:   20px;
+  --fd:   'Barlow Condensed', sans-serif;
+  --fb:   'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: var(--fb); background: var(--bg); color: var(--tx); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 0% 0%, rgba(255,214,0,.04), transparent 60%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(0,176,255,.03), transparent 60%); pointer-events: none; z-index: 0; }
+
+/* ── HEADER ── */
+.app-header { position: sticky; top: 0; z-index: 100; background: rgba(5,6,10,.96); backdrop-filter: blur(20px); border-bottom: 1px solid var(--b); padding: 0 16px; display: flex; align-items: center; gap: 10px; height: 56px; }
+.app-logo { font-family: var(--fd); font-size: 18px; font-weight: 900; color: var(--tx); flex: 1; display: flex; align-items: center; gap: 8px; }
+.logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); animation: blink 2s ease-in-out infinite; flex-shrink: 0; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+.header-badge { background: var(--bg3); border: 1px solid var(--b); border-radius: 20px; padding: 4px 10px; font-size: 11px; color: var(--tx3); font-weight: 500; }
+.btn-back { display: flex; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--b); border-radius: 20px; padding: 5px 12px; font-size: 11px; color: var(--tx2); font-weight: 600; cursor: pointer; font-family: var(--fb); text-decoration: none; }
+
+/* ── NAV ── */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: rgba(5,6,10,.97); backdrop-filter: blur(20px); border-top: 1px solid var(--b); display: flex; padding-bottom: env(safe-area-inset-bottom,0); }
+.nav-btn { flex: 1; padding: 10px 2px 8px; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--tx3); transition: color .2s; font-family: var(--fb); position: relative; }
+.nav-btn.active { color: var(--gold); }
+.nav-btn.active::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: var(--gold); border-radius: 0 0 2px 2px; box-shadow: 0 0 8px var(--gold); }
+.nav-btn .nav-icon { font-size: 20px; }
+.nav-btn span:last-child { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+
+/* ── PAGES ── */
+.page { display: none; padding: 16px 16px 90px; position: relative; z-index: 1; }
+.page.active { display: block; animation: pageIn .2s ease both; }
+@keyframes pageIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── CARDS ── */
+.card { background: var(--bg2); border: 1px solid var(--b); border-radius: var(--r2); padding: 18px; margin-bottom: 12px; position: relative; overflow: hidden; }
+.card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg,transparent,rgba(255,214,0,.2),transparent); }
+
+/* ── SECTION TITLES ── */
+.section-title { font-family: var(--fd); font-size: 22px; font-weight: 800; letter-spacing: -.2px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; color: var(--tx); }
+.section-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); flex-shrink: 0; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 13px 20px; border-radius: 12px; border: none; cursor: pointer; font-family: var(--fb); font-size: 14px; font-weight: 600; transition: all .2s; }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--gold); color: #000; width: 100%; font-weight: 700; box-shadow: 0 4px 20px rgba(255,214,0,.2); }
+.btn-secondary { background: var(--bg3); color: var(--tx); border: 1px solid var(--b); }
+.btn-danger { background: rgba(255,23,68,.1); color: var(--red); border: 1px solid rgba(255,23,68,.2); }
+.btn-green { background: var(--green); color: #000; font-weight: 700; }
+.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 8px; }
+.btn-full { width: 100%; }
+
+/* ── FORMS ── */
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); margin-bottom: 6px; }
+.form-input, .form-select { width: 100%; background: var(--bg3); border: 1px solid var(--b); border-radius: 10px; padding: 12px 14px; color: var(--tx); font-size: 15px; font-family: var(--fb); outline: none; transition: border-color .2s; -webkit-appearance: none; }
+.form-input:focus, .form-select:focus { border-color: rgba(255,214,0,.35); background: var(--bg4); }
+.form-select option { background: var(--bg3); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ── STATS ── */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--b); border-radius: 16px; padding: 16px; text-align: center; }
+.sv { font-family: var(--fd); font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.sl { font-size: 10px; color: var(--tx3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
+
+/* ── PLAYER ITEMS ── */
+.player-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg2); border-radius: 14px; margin-bottom: 8px; border: 1px solid var(--b); transition: all .15s; }
+.pi { flex: 1; min-width: 0; }
+.pn { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--fd); }
+.ps { font-size: 11px; color: var(--tx2); margin-top: 2px; }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+.badge-ok   { background: rgba(0,230,118,.1); color: var(--green); border: 1px solid rgba(0,230,118,.2); }
+.badge-no   { background: rgba(255,23,68,.1); color: var(--red); border: 1px solid rgba(255,23,68,.2); }
+.badge-warn { background: rgba(255,214,0,.1); color: var(--gold); border: 1px solid rgba(255,214,0,.2); }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { margin-bottom: 6px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--tx2); margin-bottom: 5px; font-weight: 600; }
+.progress-bar { width: 100%; height: 8px; background: var(--bg4); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+
+/* ── FONDO CARD ── */
+.fondo-card { background: var(--bg2); border: 1px solid var(--b); border-radius: var(--r2); padding: 16px; margin-bottom: 10px; position: relative; overflow: hidden; }
+.fondo-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.fondo-navidad::after { background: linear-gradient(90deg,#ff4444,#ff6b6b,#ffd600); }
+.fondo-cena::after { background: linear-gradient(90deg,#ff6b35,#ffd600); }
+.fondo-torneo::after { background: linear-gradient(90deg,#c8ff00,#00e676); }
+.fondo-libre::after { background: linear-gradient(90deg,#00b0ff,#7c3aed); }
+
+/* ── MOV ROW ── */
+.mov-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg2); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--b); }
+.mov-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.mov-ingreso { background: rgba(0,230,118,.1); }
+.mov-gasto-campo { background: rgba(0,176,255,.1); }
+.mov-gasto-material { background: rgba(255,107,53,.1); }
+.mov-fondo { background: rgba(255,214,0,.1); }
+
+/* ── MODALS ── */
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.88); backdrop-filter: blur(12px); display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet { width: 100%; background: var(--bg2); border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom,0)); border-top: 1px solid var(--b); transform: translateY(100%); transition: transform .3s cubic-bezier(.32,.72,0,1); max-height: 92vh; overflow-y: auto; }
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--bg4); border-radius: 2px; margin: 0 auto 18px; }
+.modal-title { font-family: var(--fd); font-size: 24px; font-weight: 800; margin-bottom: 16px; }
+
+/* ── ALERTS ── */
+.alert { padding: 12px 14px; border-radius: 12px; font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; line-height: 1.5; }
+.alert-ok   { background: rgba(0,230,118,.07); border: 1px solid rgba(0,230,118,.18); color: var(--green); }
+.alert-warn { background: rgba(255,214,0,.06); border: 1px solid rgba(255,214,0,.18); color: var(--gold); }
+.alert-info { background: rgba(0,176,255,.06); border: 1px solid rgba(0,176,255,.18); color: var(--blue); }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--b); margin: 14px 0; }
+
+/* ── EMPTY ── */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--tx3); }
+.empty-state .icon { font-size: 44px; margin-bottom: 12px; opacity: .35; }
+.empty-state p { font-size: 13px; line-height: 1.6; }
+
+/* ── CHIP ── */
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 6px 13px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid var(--b); background: var(--bg3); color: var(--tx3); transition: all .15s; white-space: nowrap; }
+.chip.active { background: rgba(255,214,0,.08); border-color: rgba(255,214,0,.3); color: var(--gold); }
+.chip-row { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 14px; }
+.chip-row::-webkit-scrollbar { display: none; }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+
+/* ── TOAST ── */
+.toast-el { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--b); color: var(--tx); padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; z-index: 9999; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,.5); white-space: nowrap; pointer-events: none; animation: toastIn .2s ease; }
+@keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+/* ── CHART ── */
+.chart-bar-wrap { display: flex; align-items: flex-end; gap: 6px; height: 80px; padding: 0 4px; margin-top: 8px; }
+.chart-bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.chart-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; transition: height .5s ease; }
+.chart-bar-label { font-size: 9px; color: var(--tx3); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="app-logo">
+    <span class="logo-dot"></span>
+    PEÑA<span style="color:var(--gold)">PRO</span>
+    <span style="font-size:11px;color:var(--tx3);font-weight:500;margin-left:4px">· Tesorero</span>
+  </div>
+  <div class="header-badge" id="header-date"></div>
+  <a href="index.html" class="btn-back">← Salir</a>
+</header>
+
+<!-- ══ RESUMEN ══════════════════════════════════════════ -->
+<div class="page active" id="page-resumen">
+
+  <!-- Saldo hero -->
+  <div style="background:var(--bg2);border:1px solid rgba(255,214,0,.15);border-radius:24px;padding:22px 18px;margin-bottom:16px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(255,214,0,.07),transparent 70%);pointer-events:none"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Saldo de la peña</div>
+    <div style="font-family:var(--fd);font-size:52px;font-weight:900;color:var(--gold);line-height:1" id="saldo-total">0€</div>
+    <div style="font-size:12px;color:var(--tx2);margin-top:4px" id="saldo-sub">Cargando...</div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary btn-sm" style="flex:1;background:var(--gold);color:#000" onclick="openM('modal-ingreso')">+ Ingreso</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openM('modal-gasto')">− Gasto</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openM('modal-fondo-aporte')">🏦 Fondo</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="sv" style="color:var(--green)" id="stat-ingresos">0€</div>
+      <div class="sl">Ingresos</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv" style="color:var(--red)" id="stat-gastos">0€</div>
+      <div class="sl">Gastos</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv" style="color:var(--gold)" id="stat-cuotas-ok">0</div>
+      <div class="sl">✅ Cuotas al día</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv" style="color:var(--red)" id="stat-cuotas-no">0</div>
+      <div class="sl">❌ Pendientes</div>
+    </div>
+  </div>
+
+  <!-- Gráfica mensual -->
+  <div class="card">
+    <div style="font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:4px">📊 Últimos 6 meses</div>
+    <div style="font-size:11px;color:var(--tx3);margin-bottom:8px">Ingresos vs Gastos</div>
+    <div class="chart-bar-wrap" id="chart-mensual">
+      <div class="empty-state" style="padding:10px;width:100%"><p style="font-size:11px">Sin datos aún</p></div>
+    </div>
+  </div>
+
+  <!-- Últimos movimientos -->
+  <div class="section-title"><div class="dot"></div>Últimos movimientos</div>
+  <div id="ultimos-movs">
+    <div class="empty-state"><div class="icon">💰</div><p>Sin movimientos aún</p></div>
+  </div>
+
+</div>
+
+<!-- ══ CUOTAS ══════════════════════════════════════════ -->
+<div class="page" id="page-cuotas">
+
+  <div class="section-title"><div class="dot"></div>Estado de Cuotas</div>
+
+  <!-- Resumen rápido -->
+  <div class="alert alert-info" id="cuotas-alert">Cargando jugadores...</div>
+
+  <!-- Filtros -->
+  <div class="chip-row">
+    <div class="chip active" onclick="filterCuotas('todos',this)">Todos</div>
+    <div class="chip" onclick="filterCuotas('pagado',this)">✅ Pagados</div>
+    <div class="chip" onclick="filterCuotas('pendiente',this)">❌ Pendientes</div>
+    <div class="chip" onclick="filterCuotas('parcial',this)">⚠️ Parcial</div>
+  </div>
+
+  <div id="cuotas-list">
+    <div class="empty-state"><div class="icon">👥</div><p>Cargando jugadores...</p></div>
+  </div>
+
+</div>
+
+<!-- ══ GASTOS ══════════════════════════════════════════ -->
+<div class="page" id="page-gastos">
+
+  <div class="section-title"><div class="dot"></div>Gastos</div>
+
+  <div class="chip-row">
+    <div class="chip active" onclick="filterGastos('todos',this)">Todos</div>
+    <div class="chip" onclick="filterGastos('campo',this)">🏟️ Campo</div>
+    <div class="chip" onclick="filterGastos('material',this)">⚽ Material</div>
+    <div class="chip" onclick="filterGastos('otro',this)">📦 Otro</div>
+  </div>
+
+  <!-- Totales por categoría -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div class="stat-card" style="border-color:rgba(0,176,255,.15)">
+      <div style="font-size:20px;margin-bottom:4px">🏟️</div>
+      <div class="sv" style="font-size:22px;color:var(--blue)" id="total-campo">0€</div>
+      <div class="sl">Campo</div>
+    </div>
+    <div class="stat-card" style="border-color:rgba(255,107,53,.15)">
+      <div style="font-size:20px;margin-bottom:4px">⚽</div>
+      <div class="sv" style="font-size:22px;color:#ff6b35" id="total-material">0€</div>
+      <div class="sl">Material</div>
+    </div>
+  </div>
+
+  <div id="gastos-list">
+    <div class="empty-state"><div class="icon">📋</div><p>Sin gastos registrados</p></div>
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="openM('modal-gasto')" style="position:fixed;bottom:78px;right:16px;width:52px;height:52px;border-radius:50%;padding:0;font-size:24px;box-shadow:0 4px 20px rgba(255,214,0,.35)">+</button>
+
+</div>
+
+<!-- ══ FONDOS ══════════════════════════════════════════ -->
+<div class="page" id="page-fondos">
+
+  <div class="section-title"><div class="dot"></div>Fondos de Ahorro</div>
+
+  <div class="alert alert-info">
+    💡 Crea fondos para objetivos concretos: cena de Navidad, torneo, viaje fin de temporada...
+  </div>
+
+  <div id="fondos-list">
+    <div class="empty-state"><div class="icon">🏦</div><p>Sin fondos creados.<br>Pulsa + para crear uno.</p></div>
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="openM('modal-nuevo-fondo')" style="margin-top:8px">+ Crear nuevo fondo</button>
+
+</div>
+
+<!-- ══ HISTORIAL ════════════════════════════════════════ -->
+<div class="page" id="page-historial">
+  <div class="section-title"><div class="dot"></div>Historial completo</div>
+  <div class="chip-row">
+    <div class="chip active" onclick="filterHist('todos',this)">Todos</div>
+    <div class="chip" onclick="filterHist('ingreso',this)">💰 Ingresos</div>
+    <div class="chip" onclick="filterHist('gasto',this)">💸 Gastos</div>
+    <div class="chip" onclick="filterHist('fondo',this)">🏦 Fondos</div>
+    <div class="chip" onclick="filterHist('cuota',this)">👥 Cuotas</div>
+  </div>
+  <div id="historial-list">
+    <div class="empty-state"><div class="icon">📋</div><p>Sin movimientos</p></div>
+  </div>
+</div>
+
+<!-- ══ NAV ════════════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showPage('resumen',this)"><span class="nav-icon">📊</span><span>Resumen</span></button>
+  <button class="nav-btn" onclick="showPage('cuotas',this)"><span class="nav-icon">👥</span><span>Cuotas</span></button>
+  <button class="nav-btn" onclick="showPage('gastos',this)"><span class="nav-icon">💸</span><span>Gastos</span></button>
+  <button class="nav-btn" onclick="showPage('fondos',this)"><span class="nav-icon">🏦</span><span>Fondos</span></button>
+  <button class="nav-btn" onclick="showPage('historial',this)"><span class="nav-icon">📋</span><span>Historial</span></button>
+</nav>
+
+<!-- ══ MODAL: NUEVO INGRESO ═══════════════════════════ -->
+<div class="modal-overlay" id="modal-ingreso" onclick="if(event.target===this)closeM('modal-ingreso')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💰 Registrar Ingreso</div>
+    <div class="form-group">
+      <label class="form-label">Tipo de ingreso</label>
+      <select class="form-select" id="ing-tipo">
+        <option value="cuota">👥 Cuota de jugador</option>
+        <option value="extra">➕ Ingreso extra</option>
+        <option value="torneo">🏆 Premio torneo</option>
+        <option value="otro">📦 Otro</option>
+      </select>
+    </div>
+    <div class="form-group" id="ing-jugador-wrap">
+      <label class="form-label">Jugador</label>
+      <select class="form-select" id="ing-jugador"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Concepto</label>
+      <input type="text" class="form-input" id="ing-concepto" placeholder="Cuota mayo, donación...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Importe (€)</label>
+        <input type="number" class="form-input" id="ing-importe" placeholder="0" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-input" id="ing-fecha">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nota (opcional)</label>
+      <input type="text" class="form-input" id="ing-nota" placeholder="Observaciones...">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="guardarIngreso()">💰 Guardar ingreso</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: NUEVO GASTO ════════════════════════════ -->
+<div class="modal-overlay" id="modal-gasto" onclick="if(event.target===this)closeM('modal-gasto')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💸 Registrar Gasto</div>
+    <div class="form-group">
+      <label class="form-label">Categoría</label>
+      <select class="form-select" id="gasto-cat" onchange="updateGastoIcon()">
+        <option value="campo">🏟️ Alquiler de campo</option>
+        <option value="campo">💡 Luz del campo</option>
+        <option value="material">⚽ Balones</option>
+        <option value="material">👕 Equipaciones</option>
+        <option value="material">🦺 Petos</option>
+        <option value="material">🥅 Material portería</option>
+        <option value="otro">🎉 Celebración</option>
+        <option value="otro">📦 Otro gasto</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <input type="text" class="form-input" id="gasto-desc" placeholder="Detalle del gasto...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Importe (€)</label>
+        <input type="number" class="form-input" id="gasto-importe" placeholder="0" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-input" id="gasto-fecha">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nota (opcional)</label>
+      <input type="text" class="form-input" id="gasto-nota" placeholder="Factura, recibo...">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="guardarGasto()">💸 Guardar gasto</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: NUEVO FONDO ════════════════════════════ -->
+<div class="modal-overlay" id="modal-nuevo-fondo" onclick="if(event.target===this)closeM('modal-nuevo-fondo')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏦 Nuevo Fondo</div>
+    <div class="form-group">
+      <label class="form-label">Tipo de fondo</label>
+      <select class="form-select" id="fondo-tipo">
+        <option value="navidad">🎄 Cena de Navidad</option>
+        <option value="cena">🍽️ Cena fin de temporada</option>
+        <option value="torneo">🏆 Torneo / Copa</option>
+        <option value="viaje">✈️ Viaje / Escapada</option>
+        <option value="libre">🎯 Fondo libre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nombre del fondo</label>
+      <input type="text" class="form-input" id="fondo-nombre" placeholder="Cena Navidad 2025...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Objetivo (€)</label>
+        <input type="number" class="form-input" id="fondo-objetivo" placeholder="500" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha objetivo</label>
+        <input type="date" class="form-input" id="fondo-fecha">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <input type="text" class="form-input" id="fondo-desc" placeholder="Para qué es este fondo...">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="crearFondo()">🏦 Crear fondo</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: APORTE A FONDO ═════════════════════════ -->
+<div class="modal-overlay" id="modal-fondo-aporte" onclick="if(event.target===this)closeM('modal-fondo-aporte')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏦 Aportar a Fondo</div>
+    <div class="form-group">
+      <label class="form-label">Fondo</label>
+      <select class="form-select" id="aporte-fondo-id"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Jugador (opcional)</label>
+      <select class="form-select" id="aporte-jugador">
+        <option value="">— Aporte general —</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Importe (€)</label>
+        <input type="number" class="form-input" id="aporte-importe" placeholder="0" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-input" id="aporte-fecha">
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="guardarAporte()">✅ Guardar aporte</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: EDITAR CUOTA JUGADOR ══════════════════ -->
+<div class="modal-overlay" id="modal-cuota-jugador" onclick="if(event.target===this)closeM('modal-cuota-jugador')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="cuota-modal-title">💳 Estado de Cuota</div>
+    <input type="hidden" id="cuota-player-key">
+    <div class="form-group">
+      <label class="form-label">Estado de pago</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px">
+        <button onclick="setCuotaEstado('pagado')" id="btn-pagado"
+          style="padding:12px 8px;border-radius:12px;border:2px solid rgba(0,230,118,.3);background:rgba(0,230,118,.08);color:var(--green);font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;font-family:var(--fb)">
+          ✅<br><span style="font-size:10px">Pagado</span>
+        </button>
+        <button onclick="setCuotaEstado('parcial')" id="btn-parcial"
+          style="padding:12px 8px;border-radius:12px;border:2px solid rgba(255,214,0,.3);background:rgba(255,214,0,.08);color:var(--gold);font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;font-family:var(--fb)">
+          ⚠️<br><span style="font-size:10px">Parcial</span>
+        </button>
+        <button onclick="setCuotaEstado('pendiente')" id="btn-pendiente"
+          style="padding:12px 8px;border-radius:12px;border:2px solid rgba(255,23,68,.3);background:rgba(255,23,68,.08);color:var(--red);font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;font-family:var(--fb)">
+          ❌<br><span style="font-size:10px">Pendiente</span>
+        </button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nota (opcional)</label>
+      <input type="text" class="form-input" id="cuota-nota" placeholder="Paga el viernes, debe 2 meses...">
+    </div>
+    <div style="font-size:11px;color:var(--tx3);margin-bottom:14px" id="cuota-historial-label"></div>
+    <button class="btn btn-primary btn-full" onclick="guardarCuota()">💾 Guardar</button>
+    <div class="divider"></div>
+    <button class="btn btn-secondary btn-full" onclick="enviarWARecordatorio()">📲 Recordatorio WhatsApp</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRM DELETE ═════════════════════════ -->
+<div class="modal-overlay" id="modal-confirm" onclick="if(event.target===this)closeM('modal-confirm')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚠️ Confirmar</div>
+    <div id="confirm-msg" style="font-size:14px;color:var(--tx2);margin-bottom:20px;line-height:1.6"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn btn-secondary" onclick="closeM('modal-confirm')">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-ok-btn" onclick="confirmCb&&(confirmCb(),closeM('modal-confirm'))">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, push, remove, update, onValue }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDnoeRSYwv1BzgLp_BWV3l20PofLXZsMIA",
+  authDomain: "penapro-e9aa7.firebaseapp.com",
+  databaseURL: "https://penapro-e9aa7-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "penapro-e9aa7",
+  storageBucket: "penapro-e9aa7.firebasestorage.app",
+  messagingSenderId: "1096299520081",
+  appId: "1:1096299520081:web:f6f54f9e966e75d3009870"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// ── EQUIPO ─────────────────────────────────────────────
+const EQUIPO_ID = (()=>{
+  const p = new URLSearchParams(window.location.search).get('equipo')
+          || window.location.hash.replace('#','');
+  return p || localStorage.getItem('pp_equipo') || null;
+})();
+
+if(!EQUIPO_ID) {
+  document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px">Sin equipo</div>
+    <a href="index.html" style="padding:12px 24px;background:#ffd600;color:#000;border-radius:12px;font-weight:700;text-decoration:none">← Volver</a>
+  </div>`;
+}
+
+const R = path => ref(db, `equipos/${EQUIPO_ID}/${path}`);
+
+// ── STATE ──────────────────────────────────────────────
+let S = { players:{}, config:{}, caja:[], fondos:{} };
+let currentPage = 'resumen';
+let cuotaFilter = 'todos';
+let gastoFilter = 'todos';
+let histFilter  = 'todos';
+let confirmCb   = null;
+let editingCuotaKey = null;
+let editingCuotaEstado = null;
+
+// ── UTILS ──────────────────────────────────────────────
+const el = id => document.getElementById(id);
+function arr(obj){ return obj ? Object.entries(obj).map(([k,v])=>({...v,_key:k})) : []; }
+function fDate(str){ if(!str)return''; return new Date(str+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}); }
+function fDateS(str){ if(!str)return''; return new Date(str+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'}); }
+function fmt(n){ return (n||0).toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2})+'€'; }
+function toast(msg, d=2500){
+  const t=document.createElement('div'); t.className='toast-el'; t.innerHTML=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(),d);
+}
+function ava(p,sz=38){
+  const cols=['#c8ff00','#ffd600','#ff6b35','#ff1744','#00b0ff','#00e676'];
+  const col=cols[Math.abs(hStr(p._key||'x'))%cols.length];
+  if(p.photo) return `<img src="${p.photo}" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;border:2px solid ${col};flex-shrink:0">`;
+  return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;background:var(--bg3);border:2px solid ${col};color:${col};font-family:var(--fd);font-size:${sz>32?13:10}px">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
+}
+function hStr(s){let h=0;for(let c of s)h=Math.imul(31,h)+c.charCodeAt(0)|0;return h;}
+function payBadge(pay){
+  return {pagado:'<span class="badge badge-ok">✅ Pagado</span>',
+          pendiente:'<span class="badge badge-no">❌ Pendiente</span>',
+          parcial:'<span class="badge badge-warn">⚠️ Parcial</span>'}[pay]||'<span class="badge badge-no">❌ Pendiente</span>';
+}
+
+// ── FIREBASE LISTENERS ─────────────────────────────────
+onValue(R('players'), s=>{ S.players=s.val()||{}; renderAll(); });
+onValue(R('config'),  s=>{ S.config=s.val()||{}; });
+onValue(R('caja'),    s=>{ S.caja=arr(s.val()); renderAll(); });
+onValue(R('fondos'),  s=>{ S.fondos=s.val()||{}; renderAll(); });
+
+function renderAll(){
+  if(currentPage==='resumen')  renderResumen();
+  if(currentPage==='cuotas')   renderCuotas();
+  if(currentPage==='gastos')   renderGastos();
+  if(currentPage==='fondos')   renderFondos();
+  if(currentPage==='historial')renderHistorial();
+  updateSelects();
+}
+
+// ── NAV ────────────────────────────────────────────────
+window.showPage = (name, btn) => {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  el('page-'+name).classList.add('active');
+  btn?.classList.add('active');
+  currentPage = name;
+  renderAll();
+};
+window.openM  = id => el(id).classList.add('open');
+window.closeM = id => el(id).classList.remove('open');
+
+// ── RENDER RESUMEN ─────────────────────────────────────
+function renderResumen(){
+  const players = arr(S.players);
+  const ingresos = S.caja.filter(c=>c.tipo==='ingreso').reduce((s,c)=>s+(c.importe||0),0);
+  const gastos   = S.caja.filter(c=>c.tipo==='gasto').reduce((s,c)=>s+(c.importe||0),0);
+  const fondosTotal = arr(S.fondos).reduce((s,f)=>s+(f.acumulado||0),0);
+  const saldo = ingresos - gastos;
+
+  el('saldo-total').textContent = fmt(saldo);
+  el('saldo-sub').textContent   = `${fmt(ingresos)} ingresos · ${fmt(gastos)} gastos`;
+  el('stat-ingresos').textContent = fmt(ingresos);
+  el('stat-gastos').textContent   = fmt(gastos);
+  el('stat-cuotas-ok').textContent = players.filter(p=>p.pay==='pagado').length;
+  el('stat-cuotas-no').textContent = players.filter(p=>p.pay!=='pagado').length;
+
+  // Gráfica mensual
+  renderChart();
+
+  // Últimos 5 movimientos
+  const todos = [...S.caja].sort((a,b)=>new Date(b.fecha||b.date)-new Date(a.fecha||a.date)).slice(0,5);
+  el('ultimos-movs').innerHTML = todos.length ? todos.map(c=>movRow(c)).join('') :
+    '<div class="empty-state"><div class="icon">💰</div><p>Sin movimientos aún</p></div>';
+}
+
+function renderChart(){
+  const meses = [];
+  const now = new Date();
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    meses.push({ key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, label: d.toLocaleDateString('es-ES',{month:'short'}) });
+  }
+  const maxVal = Math.max(...meses.map(m=>{
+    const ing = S.caja.filter(c=>c.tipo==='ingreso'&&(c.fecha||c.date||'').startsWith(m.key)).reduce((s,c)=>s+(c.importe||0),0);
+    const gas = S.caja.filter(c=>c.tipo==='gasto'&&(c.fecha||c.date||'').startsWith(m.key)).reduce((s,c)=>s+(c.importe||0),0);
+    return Math.max(ing,gas);
+  }),1);
+
+  el('chart-mensual').innerHTML = meses.map(m=>{
+    const ing = S.caja.filter(c=>c.tipo==='ingreso'&&(c.fecha||c.date||'').startsWith(m.key)).reduce((s,c)=>s+(c.importe||0),0);
+    const gas = S.caja.filter(c=>c.tipo==='gasto'&&(c.fecha||c.date||'').startsWith(m.key)).reduce((s,c)=>s+(c.importe||0),0);
+    const hIng = Math.max(4,Math.round(ing/maxVal*68));
+    const hGas = Math.max(4,Math.round(gas/maxVal*68));
+    return `<div class="chart-bar-item">
+      <div style="display:flex;gap:2px;align-items:flex-end;height:68px">
+        <div class="chart-bar" style="width:10px;height:${hIng}px;background:var(--green);opacity:.8"></div>
+        <div class="chart-bar" style="width:10px;height:${hGas}px;background:var(--red);opacity:.8"></div>
+      </div>
+      <div class="chart-bar-label">${m.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function movRow(c){
+  const tipo = c.tipo;
+  const cat  = c.categoria||c.cat||'otro';
+  let icon='💰', cls='mov-ingreso', color='var(--green)', signo='+';
+  if(tipo==='gasto'){
+    signo='-'; color='var(--red)';
+    if(cat==='campo'){icon='🏟️';cls='mov-gasto-campo';}
+    else if(cat==='material'){icon='⚽';cls='mov-gasto-material';}
+    else{icon='💸';cls='mov-gasto-campo';}
+  } else if(tipo==='fondo'){
+    icon='🏦'; cls='mov-fondo'; color='var(--gold)'; signo='→';
+  } else if(tipo==='cuota'){
+    icon='👥'; cls='mov-ingreso'; color='var(--green)'; signo='+';
+  }
+  return `<div class="mov-row">
+    <div class="mov-icon ${cls}">${icon}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.concepto||c.desc||'Movimiento'}</div>
+      <div style="font-size:11px;color:var(--tx2)">${fDateS(c.fecha||c.date)} ${c.nota?'· '+c.nota:''}</div>
+    </div>
+    <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:${color};flex-shrink:0">${signo}${fmt(c.importe)}</div>
+    <button onclick="delMov('${c._key}')" style="background:none;border:none;color:var(--tx3);font-size:16px;cursor:pointer;padding:4px;flex-shrink:0">🗑️</button>
+  </div>`;
+}
+
+// ── RENDER CUOTAS ──────────────────────────────────────
+function renderCuotas(){
+  let players = arr(S.players);
+  const cuota = S.config.cuota||20;
+  const pagados   = players.filter(p=>p.pay==='pagado').length;
+  const pendientes= players.filter(p=>p.pay!=='pagado').length;
+  el('cuotas-alert').innerHTML = pendientes===0
+    ? '✅ ¡Todos los jugadores están al día!'
+    : `⚠️ ${pendientes} jugador${pendientes>1?'es':''} pendiente${pendientes>1?'s':''}. Cuota: <b>${cuota}€</b>`;
+  el('cuotas-alert').className = `alert ${pendientes===0?'alert-ok':'alert-warn'}`;
+
+  if(cuotaFilter!=='todos') players = players.filter(p=>{
+    if(cuotaFilter==='pagado') return p.pay==='pagado';
+    if(cuotaFilter==='pendiente') return p.pay==='pendiente'||!p.pay;
+    if(cuotaFilter==='parcial') return p.pay==='parcial';
+    return true;
+  });
+  players.sort((a,b)=>{
+    const ord={pendiente:0,parcial:1,pagado:2};
+    return (ord[a.pay||'pendiente']||0)-(ord[b.pay||'pendiente']||0);
+  });
+
+  el('cuotas-list').innerHTML = players.length ? players.map(p=>`
+    <div class="player-item" style="cursor:pointer" onclick="openCuotaModal('${p._key}')">
+      ${ava(p)}
+      <div class="pi">
+        <div class="pn">${p.name||'?'}</div>
+        <div class="ps">${p.pos||''} · Cuota: ${cuota}€</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        ${payBadge(p.pay)}
+        ${p.phone?`<button onclick="event.stopPropagation();waRecordatorio('${p._key}')" style="font-size:10px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.2);color:#25d366;border-radius:8px;padding:3px 8px;cursor:pointer;font-family:var(--fb);font-weight:700">📲 WA</button>`:''}
+      </div>
+    </div>`).join('') :
+    '<div class="empty-state"><div class="icon">👥</div><p>Sin jugadores</p></div>';
+}
+
+// ── RENDER GASTOS ──────────────────────────────────────
+function renderGastos(){
+  let gastos = S.caja.filter(c=>c.tipo==='gasto');
+  const totalCampo    = gastos.filter(c=>c.cat==='campo').reduce((s,c)=>s+(c.importe||0),0);
+  const totalMaterial = gastos.filter(c=>c.cat==='material').reduce((s,c)=>s+(c.importe||0),0);
+  el('total-campo').textContent    = fmt(totalCampo);
+  el('total-material').textContent = fmt(totalMaterial);
+
+  if(gastoFilter!=='todos') gastos = gastos.filter(c=>c.cat===gastoFilter);
+  gastos.sort((a,b)=>new Date(b.fecha||b.date)-new Date(a.fecha||a.date));
+
+  el('gastos-list').innerHTML = gastos.length ? gastos.map(c=>movRow(c)).join('') :
+    '<div class="empty-state"><div class="icon">📋</div><p>Sin gastos en esta categoría</p></div>';
+}
+
+// ── RENDER FONDOS ──────────────────────────────────────
+function renderFondos(){
+  const fondos = arr(S.fondos);
+  const emojis = {navidad:'🎄',cena:'🍽️',torneo:'🏆',viaje:'✈️',libre:'🎯'};
+  const clases = {navidad:'fondo-navidad',cena:'fondo-cena',torneo:'fondo-torneo',viaje:'fondo-torneo',libre:'fondo-libre'};
+  const colores= {navidad:'#ff4444',cena:'#ff6b35',torneo:'var(--ac)',viaje:'var(--blue)',libre:'var(--blue)'};
+
+  el('fondos-list').innerHTML = fondos.length ? fondos.map(f=>{
+    const pct = f.objetivo>0 ? Math.min(100,Math.round((f.acumulado||0)/f.objetivo*100)) : 0;
+    const color = colores[f.tipo]||'var(--ac)';
+    const emoji = emojis[f.tipo]||'🎯';
+    const cls   = clases[f.tipo]||'fondo-libre';
+    return `<div class="fondo-card ${cls}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-size:20px;margin-bottom:2px">${emoji} <span style="font-family:var(--fd);font-size:18px;font-weight:800">${f.nombre||'Fondo'}</span></div>
+          ${f.desc?`<div style="font-size:11px;color:var(--tx2)">${f.desc}</div>`:''}
+          ${f.fecha?`<div style="font-size:10px;color:var(--tx3);margin-top:2px">📅 Objetivo: ${fDate(f.fecha)}</div>`:''}
+        </div>
+        <button onclick="delFondo('${f._key}')" style="background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer;padding:4px">🗑️</button>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span style="color:${color};font-weight:700">${fmt(f.acumulado||0)}</span>
+          <span>${pct}% · Objetivo: ${fmt(f.objetivo||0)}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${pct}%;background:${color}"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button onclick="aportarFondo('${f._key}')" class="btn btn-sm" style="flex:1;background:${color};color:#000;font-weight:700">+ Aportar</button>
+        <button onclick="verAportesFondo('${f._key}')" class="btn btn-secondary btn-sm" style="flex:1">Ver aportes</button>
+      </div>
+    </div>`;
+  }).join('') :
+  '<div class="empty-state"><div class="icon">🏦</div><p>Sin fondos.<br>Pulsa el botón para crear uno.</p></div>';
+}
+
+// ── RENDER HISTORIAL ───────────────────────────────────
+function renderHistorial(){
+  let movs = [...S.caja];
+  // Añadir aportes de fondos
+  arr(S.fondos).forEach(f=>{
+    arr(f.aportes||{}).forEach(a=>{
+      movs.push({...a, tipo:'fondo', concepto:`Aporte ${f.nombre}`, _key:a._key+'_f'});
+    });
+  });
+  if(histFilter!=='todos') movs = movs.filter(c=>c.tipo===histFilter);
+  movs.sort((a,b)=>new Date(b.fecha||b.date)-new Date(a.fecha||a.date));
+  el('historial-list').innerHTML = movs.length ? movs.map(c=>movRow(c)).join('') :
+    '<div class="empty-state"><div class="icon">📋</div><p>Sin movimientos</p></div>';
+}
+
+// ── FILTERS ────────────────────────────────────────────
+window.filterCuotas = (f,e)=>{ cuotaFilter=f; document.querySelectorAll('#page-cuotas .chip').forEach(c=>c.classList.remove('active')); e.classList.add('active'); renderCuotas(); };
+window.filterGastos = (f,e)=>{ gastoFilter=f; document.querySelectorAll('#page-gastos .chip').forEach(c=>c.classList.remove('active')); e.classList.add('active'); renderGastos(); };
+window.filterHist   = (f,e)=>{ histFilter=f;  document.querySelectorAll('#page-historial .chip').forEach(c=>c.classList.remove('active')); e.classList.add('active'); renderHistorial(); };
+
+// ── SELECTS ────────────────────────────────────────────
+function updateSelects(){
+  const players = arr(S.players);
+  const opts = players.map(p=>`<option value="${p._key}">${p.name}</option>`).join('');
+  el('ing-jugador').innerHTML = opts;
+  el('aporte-jugador').innerHTML = '<option value="">— Aporte general —</option>' + opts;
+  const fondosOpts = arr(S.fondos).map(f=>`<option value="${f._key}">${f.nombre||'Fondo'}</option>`).join('');
+  el('aporte-fondo-id').innerHTML = fondosOpts||'<option value="">Sin fondos creados</option>';
+}
+
+window.updateGastoIcon = ()=>{};
+
+// ── MODAL CUOTA ────────────────────────────────────────
+window.openCuotaModal = (key)=>{
+  const p = S.players[key];
+  if(!p) return;
+  editingCuotaKey = key;
+  editingCuotaEstado = p.pay||'pendiente';
+  el('cuota-modal-title').textContent = `💳 ${p.name}`;
+  el('cuota-player-key').value = key;
+  el('cuota-nota').value = p.cuotaNota||'';
+  highlightCuotaBtn(p.pay||'pendiente');
+  // Historial de pagos del jugador
+  const historial = S.caja.filter(c=>c.tipo==='cuota'&&c.jugadorKey===key)
+    .sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).slice(0,3);
+  el('cuota-historial-label').innerHTML = historial.length
+    ? '📋 Últimos pagos: '+historial.map(c=>`<b style="color:var(--green)">${fmt(c.importe)}</b> (${fDateS(c.fecha)})`).join(', ')
+    : '📋 Sin pagos registrados';
+  openM('modal-cuota-jugador');
+};
+
+function highlightCuotaBtn(estado){
+  ['pagado','parcial','pendiente'].forEach(e=>{
+    const btn=el('btn-'+e);
+    if(!btn)return;
+    btn.style.opacity = e===estado?'1':'.4';
+    btn.style.transform = e===estado?'scale(1.04)':'scale(1)';
+  });
+  editingCuotaEstado = estado;
+}
+
+window.setCuotaEstado = (estado)=>{ highlightCuotaBtn(estado); };
+
+window.guardarCuota = async()=>{
+  const key = el('cuota-player-key').value;
+  const nota= el('cuota-nota').value;
+  await update(R(`players/${key}`),{pay:editingCuotaEstado,cuotaNota:nota});
+  closeM('modal-cuota-jugador');
+  toast(editingCuotaEstado==='pagado'?'✅ Marcado como pagado':'💾 Estado actualizado');
+};
+
+window.waRecordatorio = (key)=>{
+  const p=S.players[key]; if(!p?.phone)return;
+  const cuota=S.config.cuota||20;
+  const msg=`Hola ${p.name} 👋 Te recordamos que tienes la cuota de la peña pendiente: *${cuota}€*. ¡Gracias! ⚽`;
+  window.open(`https://wa.me/34${p.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+};
+window.enviarWARecordatorio = ()=>{ const k=el('cuota-player-key').value; waRecordatorio(k); };
+
+// ── GUARDAR INGRESO ────────────────────────────────────
+window.guardarIngreso = async()=>{
+  const tipo    = el('ing-tipo').value;
+  const importe = parseFloat(el('ing-importe').value);
+  const concepto= el('ing-concepto').value.trim();
+  const fecha   = el('ing-fecha').value||new Date().toISOString().split('T')[0];
+  if(!importe||importe<=0){toast('⚠️ Introduce un importe');return;}
+  const mov = { tipo:tipo==='cuota'?'cuota':'ingreso', concepto:concepto||'Ingreso', importe, fecha, nota:el('ing-nota').value };
+  if(tipo==='cuota'){
+    const jugKey = el('ing-jugador').value;
+    mov.jugadorKey = jugKey;
+    mov.concepto   = concepto || `Cuota ${S.players[jugKey]?.name||''}`;
+    await update(R(`players/${jugKey}`),{pay:'pagado'});
+  }
+  await push(R('caja'),mov);
+  closeM('modal-ingreso');
+  ['ing-concepto','ing-importe','ing-nota'].forEach(id=>el(id).value='');
+  toast('✅ Ingreso guardado');
+};
+
+// ── GUARDAR GASTO ──────────────────────────────────────
+window.guardarGasto = async()=>{
+  const select  = el('gasto-cat');
+  const catText = select.options[select.selectedIndex].text;
+  const cat     = select.value;
+  const importe = parseFloat(el('gasto-importe').value);
+  const desc    = el('gasto-desc').value.trim();
+  const fecha   = el('gasto-fecha').value||new Date().toISOString().split('T')[0];
+  if(!importe||importe<=0){toast('⚠️ Introduce un importe');return;}
+  await push(R('caja'),{tipo:'gasto',cat,concepto:desc||catText,importe,fecha,nota:el('gasto-nota').value});
+  closeM('modal-gasto');
+  ['gasto-desc','gasto-importe','gasto-nota'].forEach(id=>el(id).value='');
+  toast('✅ Gasto guardado');
+};
+
+// ── CREAR FONDO ────────────────────────────────────────
+window.crearFondo = async()=>{
+  const nombre  = el('fondo-nombre').value.trim();
+  const objetivo= parseFloat(el('fondo-objetivo').value)||0;
+  const tipo    = el('fondo-tipo').value;
+  const fecha   = el('fondo-fecha').value;
+  const desc    = el('fondo-desc').value;
+  if(!nombre){toast('⚠️ Introduce un nombre');return;}
+  await push(R('fondos'),{nombre,tipo,objetivo,fecha,desc,acumulado:0,createdAt:Date.now()});
+  closeM('modal-nuevo-fondo');
+  ['fondo-nombre','fondo-objetivo','fondo-fecha','fondo-desc'].forEach(id=>el(id).value='');
+  toast('🏦 Fondo creado');
+};
+
+// ── APORTE A FONDO ─────────────────────────────────────
+window.aportarFondo = (fondoKey)=>{
+  el('aporte-fondo-id').value = fondoKey;
+  openM('modal-fondo-aporte');
+};
+
+window.guardarAporte = async()=>{
+  const fondoKey = el('aporte-fondo-id').value;
+  const importe  = parseFloat(el('aporte-importe').value);
+  const jugKey   = el('aporte-jugador').value;
+  const fecha    = el('aporte-fecha').value||new Date().toISOString().split('T')[0];
+  if(!fondoKey){toast('⚠️ Selecciona un fondo');return;}
+  if(!importe||importe<=0){toast('⚠️ Introduce un importe');return;}
+  const fondo = S.fondos[fondoKey];
+  const nuevoAcumulado = (fondo?.acumulado||0)+importe;
+  await update(R(`fondos/${fondoKey}`),{acumulado:nuevoAcumulado});
+  await push(R(`fondos/${fondoKey}/aportes`),{
+    importe, fecha,
+    jugadorKey: jugKey||null,
+    jugadorNombre: jugKey ? (S.players[jugKey]?.name||'') : 'General'
+  });
+  closeM('modal-fondo-aporte');
+  el('aporte-importe').value='';
+  toast('✅ Aporte guardado');
+};
+
+window.verAportesFondo = (fondoKey)=>{
+  const f = S.fondos[fondoKey]; if(!f) return;
+  const aportes = arr(f.aportes||{}).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const body = aportes.length
+    ? aportes.map(a=>`<div class="mov-row"><div class="mov-icon mov-fondo">🏦</div><div style="flex:1"><div style="font-weight:600;font-size:13px">${a.jugadorNombre||'General'}</div><div style="font-size:11px;color:var(--tx2)">${fDateS(a.fecha)}</div></div><div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--gold)">+${fmt(a.importe)}</div></div>`).join('')
+    : '<div class="empty-state"><p>Sin aportes aún</p></div>';
+  // Reutilizar modal confirm para mostrar info
+  el('confirm-msg').innerHTML = `<div style="font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:12px">${f.nombre}</div>${body}`;
+  el('confirm-ok-btn').style.display='none';
+  openM('modal-confirm');
+};
+
+// ── BORRAR ─────────────────────────────────────────────
+window.delMov = (key)=>{
+  el('confirm-msg').innerHTML='¿Eliminar este movimiento?';
+  el('confirm-ok-btn').style.display='';
+  el('confirm-ok-btn').textContent='Eliminar';
+  confirmCb=async()=>{ await remove(R('caja/'+key)); toast('🗑️ Eliminado'); };
+  openM('modal-confirm');
+};
+
+window.delFondo = (key)=>{
+  el('confirm-msg').innerHTML='¿Eliminar este fondo y todos sus aportes?';
+  el('confirm-ok-btn').style.display='';
+  el('confirm-ok-btn').textContent='Eliminar';
+  confirmCb=async()=>{ await remove(R('fondos/'+key)); toast('🗑️ Fondo eliminado'); };
+  openM('modal-confirm');
+};
+
+// ── INGRESO TIPO CHANGE ────────────────────────────────
+el('ing-tipo').addEventListener('change',()=>{
+  el('ing-jugador-wrap').style.display = el('ing-tipo').value==='cuota' ? 'block' : 'none';
+});
+
+// ── INIT ──────────────────────────────────────────────
+el('header-date').textContent = new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+// Set today as default dates
+const hoy = new Date().toISOString().split('T')[0];
+['ing-fecha','gasto-fecha','aporte-fecha'].forEach(id=>{ const e=el(id); if(e)e.value=hoy; });
+
+toast('💰 Módulo Tesorero', 1800);
+</script>
+</body>
+</html>
