@@ -296,7 +296,7 @@ const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
 const GEMINI_KEY = "AIzaSyDdR_PSGqg5tD8u4Z4s7iessjy9W-i6fnk";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`;
 
 // ── EQUIPO ──────────────────────────────────────────
 const EQUIPO_ID = (()=>{
@@ -518,19 +518,26 @@ INSTRUCCIONES:
   try {
     const res = await fetch(GEMINI_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'cors',
+      headers: { 
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        contents: [
-          { role: "user", parts: [{ text: systemPrompt + "\n\nPREGUNTA: " + pregunta }] }
-        ],
+        contents: [{
+          parts: [{ text: systemPrompt + "\n\nPREGUNTA DEL USUARIO: " + pregunta }]
+        }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 400,
+          maxOutputTokens: 500,
         }
       })
     });
 
-    if (!res.ok) throw new Error('API error: ' + res.status);
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error('HTTP error:', res.status, errBody);
+      throw new Error('HTTP ' + res.status + ': ' + errBody.slice(0,100));
+    }
     const json = await res.json();
     const texto = json.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude procesar esa consulta.';
 
@@ -539,7 +546,11 @@ INSTRUCCIONES:
     return { texto, acciones };
 
   } catch(e) {
-    return { texto: '⚠️ Error al contactar con la IA. Comprueba tu conexión.', acciones: [] };
+    console.error('Gemini error:', e);
+    const msg = e.message.includes('403') || e.message.includes('400')
+      ? '🔑 API Key bloqueada. Ve a aistudio.google.com/apikey y quita las restricciones de dominio.'
+      : '⚠️ Error de conexión. Asegúrate de estar en Chrome y con internet.';
+    return { texto: msg, acciones: [] };
   }
 }
 
