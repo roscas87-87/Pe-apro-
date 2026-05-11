@@ -461,16 +461,6 @@ body::before {
   <button class="fab admin-only" onclick="openM('modal-add-conv')" style="display:none">+</button>
 </div>
 
-<!-- TEMPORADAS -->
-<div class="page" id="page-temporadas">
-  <div class="section-title"><div class="dot"></div>Temporadas</div>
-  <div class="admin-only" style="display:none;margin-bottom:14px">
-    <div class="alert alert-warn">⚠️ Cerrar temporada resetea todas las estadísticas.</div>
-    <button class="btn btn-gold btn-full" onclick="openM('modal-close-season')">🏆 Cerrar Temporada</button>
-  </div>
-  <div id="temporadas-list"></div>
-</div>
-
 <!-- AJUSTES -->
 <div class="page" id="page-ajustes">
   <div class="section-title"><div class="dot"></div>Ajustes</div>
@@ -569,7 +559,7 @@ body::before {
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('noticias',null)"><span style="font-size:24px">📢</span><span>Noticias</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('chat',null)"><span style="font-size:24px">💬</span><span>Chat</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('convocatoria',null)"><span style="font-size:24px">📋</span><span>Convocat.</span></button>
-      <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('temporadas',null)"><span style="font-size:24px">🔄</span><span>Temporadas</span></button>
+      
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('muro',null)"><span style="font-size:24px">🏆</span><span>Muro</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('ajustes',null)"><span style="font-size:24px">⚙️</span><span>Ajustes</span></button>
     </div>
@@ -589,7 +579,7 @@ body::before {
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('noticias',null)"><span style="font-size:24px">📢</span><span>Noticias</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('chat',null)"><span style="font-size:24px">💬</span><span>Chat</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('convocatoria',null)"><span style="font-size:24px">📋</span><span>Convocatoria</span></button>
-      <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('temporadas',null)"><span style="font-size:24px">🔄</span><span>Temporadas</span></button>
+      
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('ajustes',null)"><span style="font-size:24px">⚙️</span><span>Ajustes</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px;grid-column:1/-1" onclick="closeM('modal-more');showPage('muro',null)"><span style="font-size:24px">🏆😤</span><span>Gloria & Vergüenza</span></button>
     </div>
@@ -709,7 +699,7 @@ body::before {
       <div class="form-group"><label class="form-label">Goles</label><input type="number" class="form-input" id="pf-goals" min="0" placeholder="0"></div>
       <div class="form-group"><label class="form-label">Asistencias</label><input type="number" class="form-input" id="pf-assists" min="0" placeholder="0"></div>
     </div>
-    <div class="form-group"><label class="form-label">🎯 Puntos Extra Manuales</label><input type="number" class="form-input" id="pf-bonus" min="0" placeholder="0"><div style="font-size:11px;color:var(--tx2);margin-top:4px">Puntos históricos de temporadas anteriores</div></div>
+    </div>
     <div id="pm-badges"></div>
     <div style="display:flex;gap:8px;margin-top:6px">
       <button class="btn btn-primary" style="flex:1" onclick="savePlayer()">💾 Guardar</button>
@@ -911,7 +901,7 @@ body::before {
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('noticias',null)"><span style="font-size:24px">📢</span><span>Noticias</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('chat',null)"><span style="font-size:24px">💬</span><span>Chat</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('convocatoria',null)"><span style="font-size:24px">📋</span><span>Convocatoria</span></button>
-      <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('temporadas',null)"><span style="font-size:24px">🔄</span><span>Temporadas</span></button>
+      
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('ajustes',null)"><span style="font-size:24px">⚙️</span><span>Ajustes</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px;grid-column:1/-1" onclick="closeM('modal-more');showPage('muro',null)"><span style="font-size:24px">🏆😤</span><span>Gloria & Vergüenza</span></button>
     </div>
@@ -1022,7 +1012,7 @@ body::before {
       <div class="form-group"><label class="form-label">Goles</label><input type="number" class="form-input" id="pf-goals" min="0" placeholder="0"></div>
       <div class="form-group"><label class="form-label">Asistencias</label><input type="number" class="form-input" id="pf-assists" min="0" placeholder="0"></div>
     </div>
-    <div class="form-group"><label class="form-label">🎯 Puntos Extra Manuales</label><input type="number" class="form-input" id="pf-bonus" min="0" placeholder="0"><div style="font-size:11px;color:var(--tx2);margin-top:4px">Puntos históricos de temporadas anteriores</div></div>
+    </div>
     <div id="pm-badges"></div>
     <div style="display:flex;gap:8px;margin-top:6px">
       <button class="btn btn-primary" style="flex:1" onclick="savePlayer()">💾 Guardar</button>
@@ -1223,7 +1213,7 @@ body::before {
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('noticias',null)"><span style="font-size:24px">📢</span><span>Noticias</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('chat',null)"><span style="font-size:24px">💬</span><span>Chat</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('convocatoria',null)"><span style="font-size:24px">📋</span><span>Convocatoria</span></button>
-      <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('temporadas',null)"><span style="font-size:24px">🔄</span><span>Temporadas</span></button>
+      
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('ajustes',null)"><span style="font-size:24px">⚙️</span><span>Ajustes</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px;grid-column:1/-1" onclick="closeM('modal-more');showPage('muro',null)"><span style="font-size:24px">🏆😤</span><span>Gloria & Vergüenza</span></button>
     </div>
@@ -1334,7 +1324,7 @@ body::before {
       <div class="form-group"><label class="form-label">Goles</label><input type="number" class="form-input" id="pf-goals" min="0" placeholder="0"></div>
       <div class="form-group"><label class="form-label">Asistencias</label><input type="number" class="form-input" id="pf-assists" min="0" placeholder="0"></div>
     </div>
-    <div class="form-group"><label class="form-label">🎯 Puntos Extra Manuales</label><input type="number" class="form-input" id="pf-bonus" min="0" placeholder="0"><div style="font-size:11px;color:var(--tx2);margin-top:4px">Puntos históricos de temporadas anteriores</div></div>
+    </div>
     <div id="pm-badges"></div>
     <div style="display:flex;gap:8px;margin-top:6px">
       <button class="btn btn-primary" style="flex:1" onclick="savePlayer()">💾 Guardar</button>
@@ -1535,7 +1525,7 @@ body::before {
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('noticias',null)"><span style="font-size:24px">📢</span><span>Noticias</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('chat',null)"><span style="font-size:24px">💬</span><span>Chat</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('convocatoria',null)"><span style="font-size:24px">📋</span><span>Convocatoria</span></button>
-      <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('temporadas',null)"><span style="font-size:24px">🔄</span><span>Temporadas</span></button>
+      
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px" onclick="closeM('modal-more');showPage('ajustes',null)"><span style="font-size:24px">⚙️</span><span>Ajustes</span></button>
       <button class="btn btn-secondary" style="flex-direction:column;gap:5px;padding:14px;height:76px;grid-column:1/-1" onclick="closeM('modal-more');showPage('muro',null)"><span style="font-size:24px">🏆😤</span><span>Gloria & Vergüenza</span></button>
     </div>
@@ -1646,7 +1636,7 @@ body::before {
       <div class="form-group"><label class="form-label">Goles</label><input type="number" class="form-input" id="pf-goals" min="0" placeholder="0"></div>
       <div class="form-group"><label class="form-label">Asistencias</label><input type="number" class="form-input" id="pf-assists" min="0" placeholder="0"></div>
     </div>
-    <div class="form-group"><label class="form-label">🎯 Puntos Extra Manuales</label><input type="number" class="form-input" id="pf-bonus" min="0" placeholder="0"><div style="font-size:11px;color:var(--tx2);margin-top:4px">Puntos históricos de temporadas anteriores</div></div>
+    </div>
     <div id="pm-badges"></div>
     <div style="display:flex;gap:8px;margin-top:6px">
       <button class="btn btn-primary" style="flex:1" onclick="savePlayer()">💾 Guardar</button>
@@ -2261,7 +2251,7 @@ window.openAddP=()=>{
   photoB64=null;editingKey=null;
   el('pm-title').textContent='➕ Añadir Jugador';
   el('pm-delete').style.display='none';
-  ['pf-name','pf-num','pf-bonus','pf-goals','pf-assists','pf-phone','pf-bday'].forEach(id=>el(id).value='');
+  ['pf-name','pf-num','pf-goals','pf-assists','pf-phone','pf-bday'].forEach(id=>el(id).value='');
   el('pf-pos').value='Centrocampista';el('pf-pay').value='pendiente';
   el('pf-kit-h').value='#c8ff00';el('pf-kit-a').value='#ffd700';
   el('pf-lesionado').checked=false;el('pf-sancionado').checked=false;
@@ -2321,7 +2311,7 @@ window.openEditP=(key)=>{
   el('pf-name').value=p.name||'';el('pf-num').value=p.num||'';
   el('pf-pos').value=p.pos||'Centrocampista';setTimeout(()=>setPayStatus(p.pay||'pendiente'),50);
   el('pf-goals').value=p.goals||0;
-  el('pf-assists').value=p.assists||0;el('pf-bonus').value=p.bonusPoints||0;
+  el('pf-assists').value=p.assists||0;
   el('pf-phone').value=p.phone||'';el('pf-bday').value=p.bday||'';
   el('pf-playerpin').value=''; // don't show existing PIN for security
   el('pf-kit-h').value=p.kitHome||'#c8ff00';el('pf-kit-a').value=p.kitAway||'#ffd700';
@@ -2355,7 +2345,7 @@ window.savePlayer=async()=>{
   const data={name,pos:el('pf-pos').value,num:parseInt(el('pf-num').value)||0,
     pay:el('pf-pay').value,
     goals:parseInt(el('pf-goals').value)||0,assists:parseInt(el('pf-assists').value)||0,
-    bonusPoints:parseInt(el('pf-bonus').value)||0,
+    
     phone:el('pf-phone').value.trim(),bday:el('pf-bday').value,
     playerPin:el('pf-playerpin').value||S.players[editingKey]?.playerPin||'',
     kitHome:el('pf-kit-h').value||'#c8ff00',kitAway:el('pf-kit-a').value||'#ffd700',
