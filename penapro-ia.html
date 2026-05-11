@@ -536,7 +536,7 @@ INSTRUCCIONES:
     if (!res.ok) {
       const errBody = await res.text();
       console.error('HTTP error:', res.status, errBody);
-      throw new Error('HTTP ' + res.status + ': ' + errBody.slice(0,100));
+      return { texto: '❌ HTTP ' + res.status + ': ' + errBody.slice(0,150), acciones: [] };
     }
     const json = await res.json();
     const texto = json.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude procesar esa consulta.';
@@ -547,10 +547,7 @@ INSTRUCCIONES:
 
   } catch(e) {
     console.error('Gemini error:', e);
-    const msg = e.message.includes('403') || e.message.includes('400')
-      ? '🔑 API Key bloqueada. Ve a aistudio.google.com/apikey y quita las restricciones de dominio.'
-      : '⚠️ Error de conexión. Asegúrate de estar en Chrome y con internet.';
-    return { texto: msg, acciones: [] };
+    return { texto: '⚠️ Error técnico: ' + e.name + ' — ' + e.message.slice(0,120), acciones: [] };
   }
 }
 
