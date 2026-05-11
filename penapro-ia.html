@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#05060a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>PeñaPro · Asistente IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #05060a;
+  --bg2:  #0c0e14;
+  --bg3:  #131620;
+  --ac:   #c8ff00;
+  --gold: #ffd600;
+  --red:  #ff1744;
+  --blue: #00b0ff;
+  --tx:   #f2f2f2;
+  --tx2:  #8a8fa8;
+  --tx3:  #454a60;
+  --b:    rgba(255,255,255,.07);
+  --fd:   'Barlow Condensed', sans-serif;
+  --fb:   'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: var(--fb); background: var(--bg); color: var(--tx); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,255,0,.05), transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5,6,10,.96); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--b);
+  padding: 0 16px; height: 56px;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo { font-family: var(--fd); font-size: 18px; font-weight: 900; flex: 1; }
+.logo span { color: var(--ac); }
+.back-btn {
+  background: var(--bg3); border: 1px solid var(--b);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11px; color: var(--tx2); font-weight: 600;
+  cursor: pointer; text-decoration: none;
+}
+
+/* ── MAIN ── */
+.main { padding: 20px 16px 120px; position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
+
+/* ── HERO ── */
+.hero {
+  text-align: center; margin-bottom: 28px;
+}
+.hero-title {
+  font-family: var(--fd); font-size: 32px; font-weight: 900;
+  color: var(--tx); margin-bottom: 6px;
+}
+.hero-sub { font-size: 13px; color: var(--tx2); line-height: 1.6; }
+
+/* ── MIC BUTTON ── */
+.mic-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  margin: 24px 0;
+}
+
+.mic-btn {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: var(--bg2);
+  border: 2px solid var(--b);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 36px;
+  transition: all .2s; position: relative;
+  box-shadow: 0 0 0 0 rgba(200,255,0,0);
+}
+.mic-btn:active { transform: scale(.95); }
+.mic-btn.listening {
+  border-color: var(--ac);
+  box-shadow: 0 0 0 12px rgba(200,255,0,.08), 0 0 0 24px rgba(200,255,0,.04);
+  animation: micPulse 1.5s ease-in-out infinite;
+}
+.mic-btn.thinking {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 8px rgba(255,214,0,.08);
+  animation: micSpin 2s linear infinite;
+}
+@keyframes micPulse {
+  0%,100% { box-shadow: 0 0 0 8px rgba(200,255,0,.08), 0 0 0 20px rgba(200,255,0,.03); }
+  50%      { box-shadow: 0 0 0 16px rgba(200,255,0,.12), 0 0 0 32px rgba(200,255,0,.05); }
+}
+@keyframes micSpin {
+  0%   { box-shadow: 0 0 0 8px rgba(255,214,0,.08); border-color: var(--gold); }
+  50%  { box-shadow: 0 0 0 16px rgba(255,214,0,.04); }
+  100% { box-shadow: 0 0 0 8px rgba(255,214,0,.08); border-color: var(--gold); }
+}
+
+.mic-status {
+  margin-top: 14px; font-size: 13px; font-weight: 600;
+  color: var(--tx3); transition: color .2s; text-align: center;
+}
+.mic-status.active { color: var(--ac); }
+.mic-status.thinking { color: var(--gold); }
+.mic-status.error { color: var(--red); }
+
+/* ── TRANSCRIPT ── */
+.transcript-box {
+  background: var(--bg2); border: 1px solid var(--b);
+  border-radius: 16px; padding: 14px 16px; margin-bottom: 16px;
+  min-height: 60px; display: none;
+}
+.transcript-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); margin-bottom: 6px; }
+.transcript-text { font-size: 15px; color: var(--tx); line-height: 1.5; font-style: italic; }
+
+/* ── RESPONSE ── */
+.response-box {
+  background: var(--bg2); border: 1px solid rgba(200,255,0,.15);
+  border-radius: 16px; padding: 16px; margin-bottom: 16px;
+  display: none; position: relative; overflow: hidden;
+}
+.response-box::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(200,255,0,.3),transparent);
+}
+.response-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ac); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.response-text { font-size: 14px; color: var(--tx); line-height: 1.7; }
+
+/* ── ACCIONES EJECUTADAS ── */
+.action-box {
+  background: rgba(200,255,0,.05); border: 1px solid rgba(200,255,0,.15);
+  border-radius: 14px; padding: 14px; margin-bottom: 16px;
+  display: none;
+}
+.action-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ac); margin-bottom: 6px; }
+.action-item:last-child { margin-bottom: 0; }
+.action-item::before { content: '✓'; font-weight: 800; }
+
+/* ── EJEMPLOS ── */
+.ejemplos { margin-bottom: 20px; }
+.ejemplos-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); margin-bottom: 10px; }
+.ejemplo-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 13px; background: var(--bg2);
+  border: 1px solid var(--b); border-radius: 20px;
+  font-size: 12px; color: var(--tx2); cursor: pointer;
+  margin: 0 6px 8px 0; transition: all .15s;
+  font-family: var(--fb);
+}
+.ejemplo-chip:active { border-color: rgba(200,255,0,.3); color: var(--ac); background: rgba(200,255,0,.05); }
+
+/* ── HISTORIAL ── */
+.historial { margin-top: 8px; }
+.historial-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); margin-bottom: 10px; }
+.historial-item {
+  padding: 10px 14px; background: var(--bg2);
+  border: 1px solid var(--b); border-radius: 12px; margin-bottom: 8px;
+}
+.historial-q { font-size: 12px; color: var(--tx2); margin-bottom: 4px; }
+.historial-a { font-size: 13px; color: var(--tx); line-height: 1.5; }
+
+/* ── INPUT TEXTO ── */
+.input-row {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(5,6,10,.97); backdrop-filter: blur(20px);
+  border-top: 1px solid var(--b);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom,0));
+  display: flex; gap: 8px; align-items: center;
+  max-width: 100%;
+}
+.text-input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--b);
+  border-radius: 24px; padding: 11px 16px; color: var(--tx);
+  font-size: 14px; font-family: var(--fb); outline: none;
+  transition: border-color .2s;
+}
+.text-input:focus { border-color: rgba(200,255,0,.3); }
+.send-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--ac); border: none; cursor: pointer;
+  font-size: 18px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s; color: #000;
+}
+.send-btn:active { transform: scale(.93); }
+.mic-small {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--b);
+  cursor: pointer; font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s;
+}
+.mic-small.on { background: rgba(200,255,0,.1); border-color: var(--ac); }
+
+/* ── NO SUPPORT ── */
+.no-support {
+  background: rgba(255,23,68,.08); border: 1px solid rgba(255,23,68,.2);
+  border-radius: 14px; padding: 14px 16px;
+  font-size: 13px; color: #ff6b6b; margin-bottom: 16px;
+  display: none;
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">PEÑA<span>PRO</span> · <span style="color:var(--gold);font-size:14px">IA</span></div>
+  <a href="penapro-app.html" class="back-btn">← App</a>
+</header>
+
+<div class="main">
+
+  <div class="hero">
+    <div class="hero-title">🎙️ Asistente PeñaPro</div>
+    <div class="hero-sub">Habla o escribe para gestionar tu peña.<br>La IA lo entiende y actúa.</div>
+  </div>
+
+  <!-- Sin soporte voz -->
+  <div class="no-support" id="no-support">
+    ⚠️ Tu navegador no soporta reconocimiento de voz. Usa el texto de abajo o abre en Chrome.
+  </div>
+
+  <!-- Botón micrófono grande -->
+  <div class="mic-wrap">
+    <div class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙️</div>
+    <div class="mic-status" id="mic-status">Pulsa para hablar</div>
+  </div>
+
+  <!-- Lo que has dicho -->
+  <div class="transcript-box" id="transcript-box">
+    <div class="transcript-label">🎤 Has dicho</div>
+    <div class="transcript-text" id="transcript-text"></div>
+  </div>
+
+  <!-- Respuesta IA -->
+  <div class="response-box" id="response-box">
+    <div class="response-label">🤖 Asistente PeñaPro</div>
+    <div class="response-text" id="response-text"></div>
+  </div>
+
+  <!-- Acciones ejecutadas -->
+  <div class="action-box" id="action-box">
+    <div id="action-list"></div>
+  </div>
+
+  <!-- Ejemplos -->
+  <div class="ejemplos">
+    <div class="ejemplos-title">💡 Prueba decir</div>
+    <div id="ejemplos-list">
+      <span class="ejemplo-chip" onclick="usarEjemplo(this)">⚽ Hazme los equipos</span>
+      <span class="ejemplo-chip" onclick="usarEjemplo(this)">🏆 ¿Quién lleva más goles?</span>
+      <span class="ejemplo-chip" onclick="usarEjemplo(this)">💰 ¿Quién no ha pagado?</span>
+      <span class="ejemplo-chip" onclick="usarEjemplo(this)">📊 Resumen de la peña</span>
+      <span class="ejemplo-chip" onclick="usarEjemplo(this)">🔥 ¿Quién tiene mejor racha?</span>
+      <span class="ejemplo-chip" onclick="usarEjemplo(this)">⭐ ¿Quién ha ganado más MVPs?</span>
+    </div>
+  </div>
+
+  <!-- Historial -->
+  <div class="historial" id="historial-wrap" style="display:none">
+    <div class="historial-title">📋 Conversación</div>
+    <div id="historial-list"></div>
+  </div>
+
+</div>
+
+<!-- Input texto fijo abajo -->
+<div class="input-row">
+  <div class="mic-small" id="mic-small" onclick="toggleMic()">🎙️</div>
+  <input type="text" class="text-input" id="text-input" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')enviarTexto()">
+  <button class="send-btn" onclick="enviarTexto()">➤</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, push, update, remove }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDnoeRSYwv1BzgLp_BWV3l20PofLXZsMIA",
+  authDomain: "penapro-e9aa7.firebaseapp.com",
+  databaseURL: "https://penapro-e9aa7-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "penapro-e9aa7",
+  storageBucket: "penapro-e9aa7.firebasestorage.app",
+  messagingSenderId: "1096299520081",
+  appId: "1:1096299520081:web:f6f54f9e966e75d3009870"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+const GEMINI_KEY = "AIzaSyDdR_PSGqg5tD8u4Z4s7iessjy9W-i6fnk";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+
+// ── EQUIPO ──────────────────────────────────────────
+const EQUIPO_ID = (()=>{
+  const p = new URLSearchParams(window.location.search).get('equipo')
+          || window.location.hash.replace('#','');
+  return p || localStorage.getItem('pp_equipo') || null;
+})();
+const R = path => ref(db, `equipos/${EQUIPO_ID}/${path}`);
+
+// ── STATE ────────────────────────────────────────────
+let recognition = null;
+let isListening  = false;
+let historial    = [];
+
+// ── SPEECH RECOGNITION ───────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (!SpeechRecognition) {
+  document.getElementById('no-support').style.display = 'block';
+  document.getElementById('mic-btn').style.opacity = '0.3';
+  document.getElementById('mic-btn').style.cursor = 'not-allowed';
+} else {
+  recognition = new SpeechRecognition();
+  recognition.lang = 'es-ES';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    isListening = true;
+    setMicState('listening');
+  };
+
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    mostrarTranscript(transcript);
+    if (e.results[e.results.length-1].isFinal) {
+      procesarConsulta(transcript);
+    }
+  };
+
+  recognition.onerror = (e) => {
+    isListening = false;
+    setMicState('idle');
+    if (e.error !== 'no-speech') {
+      setStatus('error', '⚠️ Error de micrófono. Intenta de nuevo.');
+    }
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    if (document.getElementById('mic-status').classList.contains('active')) {
+      setMicState('idle');
+    }
+  };
+}
+
+window.toggleMic = () => {
+  if (!SpeechRecognition) return;
+  if (isListening) {
+    recognition.stop();
+    setMicState('idle');
+  } else {
+    recognition.start();
+  }
+};
+
+function setMicState(state) {
+  const btn    = document.getElementById('mic-btn');
+  const small  = document.getElementById('mic-small');
+  const status = document.getElementById('mic-status');
+  btn.className = 'mic-btn';
+  small.className = 'mic-small';
+  status.className = 'mic-status';
+
+  if (state === 'listening') {
+    btn.className = 'mic-btn listening';
+    small.className = 'mic-small on';
+    status.className = 'mic-status active';
+    status.textContent = '🔴 Escuchando...';
+    btn.textContent = '🎙️';
+  } else if (state === 'thinking') {
+    btn.className = 'mic-btn thinking';
+    status.className = 'mic-status thinking';
+    status.textContent = '🤔 Pensando...';
+    btn.textContent = '⏳';
+  } else {
+    status.textContent = 'Pulsa para hablar';
+    btn.textContent = '🎙️';
+  }
+}
+
+function setStatus(type, msg) {
+  const s = document.getElementById('mic-status');
+  s.className = `mic-status ${type}`;
+  s.textContent = msg;
+}
+
+function mostrarTranscript(text) {
+  const box = document.getElementById('transcript-box');
+  const txt = document.getElementById('transcript-text');
+  box.style.display = 'block';
+  txt.textContent = text;
+}
+
+// ── PROCESAR CONSULTA ────────────────────────────────
+async function procesarConsulta(texto) {
+  if (!texto.trim()) return;
+  setMicState('thinking');
+  ocultarRespuesta();
+
+  // Leer datos de Firebase
+  const data = await leerDatos();
+  const contexto = construirContexto(data);
+
+  // Llamar a Gemini
+  const respuesta = await llamarGemini(texto, contexto, data);
+
+  setMicState('idle');
+  mostrarRespuesta(respuesta, texto);
+
+  // Guardar en historial
+  historial.unshift({ q: texto, a: respuesta.texto });
+  renderHistorial();
+}
+
+window.enviarTexto = () => {
+  const input = document.getElementById('text-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+  input.value = '';
+  mostrarTranscript(texto);
+  procesarConsulta(texto);
+};
+
+window.usarEjemplo = (el) => {
+  const texto = el.textContent.replace(/^[^\s]+\s/, '').trim();
+  document.getElementById('text-input').value = texto;
+  mostrarTranscript(texto);
+  procesarConsulta(texto);
+};
+
+// ── LEER DATOS FIREBASE ──────────────────────────────
+async function leerDatos() {
+  if (!EQUIPO_ID) return { players:{}, matches:{}, config:{} };
+  try {
+    const [pSnap, mSnap, cSnap] = await Promise.all([
+      get(R('players')),
+      get(R('matches')),
+      get(R('config')),
+    ]);
+    return {
+      players: pSnap.val() || {},
+      matches:  mSnap.val() || {},
+      config:   cSnap.val() || {},
+    };
+  } catch(e) {
+    return { players:{}, matches:{}, config:{} };
+  }
+}
+
+// ── CONSTRUIR CONTEXTO ───────────────────────────────
+function construirContexto(data) {
+  const players = Object.entries(data.players || {}).map(([k,p]) => ({
+    id: k,
+    nombre: p.name,
+    posicion: p.pos || 'Sin posición',
+    goles: p.goals || 0,
+    victorias: p.wins || 0,
+    mvp: p.mvp || 0,
+    cuota: p.pay || 'pendiente',
+    lesionado: p.lesionado || false,
+    racha: p.streak || 0,
+  }));
+
+  const partidos = Object.values(data.matches || {}).length;
+  const cuota = data.config?.cuota || 20;
+  const nombre = data.config?.peña || 'Mi Peña';
+
+  const pendientes = players.filter(p => p.cuota !== 'pagado').map(p => p.nombre);
+  const pagados = players.filter(p => p.cuota === 'pagado').map(p => p.nombre);
+
+  return `
+PEÑA: ${nombre}
+CUOTA: ${cuota}€/mes
+TOTAL JUGADORES: ${players.length}
+PARTIDOS JUGADOS: ${partidos}
+
+JUGADORES:
+${players.map(p => `- ${p.nombre} | Pos: ${p.posicion} | Goles: ${p.goles} | Victorias: ${p.victorias} | MVPs: ${p.mvp} | Cuota: ${p.cuota}${p.lesionado?' | LESIONADO':''}`).join('\n')}
+
+PAGOS PENDIENTES: ${pendientes.length > 0 ? pendientes.join(', ') : 'Ninguno'}
+PAGADOS: ${pagados.length > 0 ? pagados.join(', ') : 'Ninguno'}
+  `.trim();
+}
+
+// ── LLAMAR GEMINI ────────────────────────────────────
+async function llamarGemini(pregunta, contexto, data) {
+  const systemPrompt = `Eres el asistente inteligente de PeñaPro, una app de gestión de peñas de fútbol.
+Tienes acceso a los datos reales de la peña y debes responder de forma concisa, directa y en español.
+Usa emojis para hacer las respuestas más visuales.
+
+DATOS ACTUALES DE LA PEÑA:
+${contexto}
+
+CAPACIDADES:
+- Responder preguntas sobre jugadores, estadísticas, cuotas, partidos
+- Sugerir equipos equilibrados
+- Dar resúmenes de la peña
+- Identificar quién no ha pagado
+- Analizar rachas y rendimiento
+
+INSTRUCCIONES:
+- Responde siempre en español
+- Sé conciso (máximo 150 palabras)
+- Si te piden hacer equipos, crea 2 equipos equilibrados con los jugadores disponibles
+- Si preguntan por cuotas, da la lista clara
+- Usa los datos reales, no inventes`;
+
+  try {
+    const res = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          { role: "user", parts: [{ text: systemPrompt + "\n\nPREGUNTA: " + pregunta }] }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 400,
+        }
+      })
+    });
+
+    if (!res.ok) throw new Error('API error: ' + res.status);
+    const json = await res.json();
+    const texto = json.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude procesar esa consulta.';
+
+    // Detectar si hay acciones a ejecutar
+    const acciones = detectarAcciones(pregunta, data);
+    return { texto, acciones };
+
+  } catch(e) {
+    return { texto: '⚠️ Error al contactar con la IA. Comprueba tu conexión.', acciones: [] };
+  }
+}
+
+// ── DETECTAR ACCIONES ─────────────────────────────────
+function detectarAcciones(pregunta, data) {
+  const p = pregunta.toLowerCase();
+  const acciones = [];
+
+  // Por ahora solo detectamos y sugerimos, no ejecutamos automáticamente
+  // (seguridad: el admin confirma antes de cambiar datos)
+  if (p.includes('recordatorio') || p.includes('whatsapp') || p.includes('cuota')) {
+    const pendientes = Object.entries(data.players || {})
+      .filter(([,p]) => p.pay !== 'pagado' && p.phone)
+      .map(([,p]) => p.name);
+    if (pendientes.length) {
+      acciones.push(`💬 Puedo mandar WhatsApp a: ${pendientes.join(', ')}`);
+    }
+  }
+
+  return acciones;
+}
+
+// ── MOSTRAR RESPUESTA ────────────────────────────────
+function mostrarRespuesta(respuesta, pregunta) {
+  const box = document.getElementById('response-box');
+  const txt = document.getElementById('response-text');
+  box.style.display = 'block';
+  txt.textContent = respuesta.texto;
+
+  // Acciones sugeridas
+  const actionBox  = document.getElementById('action-box');
+  const actionList = document.getElementById('action-list');
+  if (respuesta.acciones && respuesta.acciones.length) {
+    actionBox.style.display = 'block';
+    actionList.innerHTML = respuesta.acciones
+      .map(a => `<div class="action-item">${a}</div>`)
+      .join('');
+  } else {
+    actionBox.style.display = 'none';
+  }
+
+  // TTS — leer la respuesta en voz alta
+  if ('speechSynthesis' in window) {
+    const utt = new SpeechSynthesisUtterance(respuesta.texto.replace(/[🎙️⚽🏆💰📊🔥⭐🤖✓⚠️💬]/g,''));
+    utt.lang = 'es-ES';
+    utt.rate = 1.05;
+    utt.pitch = 1;
+    window.speechSynthesis.speak(utt);
+  }
+}
+
+function ocultarRespuesta() {
+  document.getElementById('response-box').style.display = 'none';
+  document.getElementById('action-box').style.display = 'none';
+}
+
+// ── HISTORIAL ────────────────────────────────────────
+function renderHistorial() {
+  const wrap = document.getElementById('historial-wrap');
+  const list = document.getElementById('historial-list');
+  if (!historial.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = historial.slice(0, 5).map(h => `
+    <div class="historial-item">
+      <div class="historial-q">🎤 ${h.q}</div>
+      <div class="historial-a">${h.a}</div>
+    </div>
+  `).join('');
+}
+
+// ── INIT ─────────────────────────────────────────────
+if (!EQUIPO_ID) {
+  document.getElementById('mic-status').textContent = '⚠️ Sin equipo — entra con ?equipo=tucodigo';
+  document.getElementById('mic-status').className = 'mic-status error';
+}
+</script>
+</body>
+</html>
