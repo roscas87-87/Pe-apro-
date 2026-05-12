@@ -23,6 +23,284 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="penapro.css">
+<style>
+/* ── OVERRIDE: Mockup-style visual ─────────────────── */
+
+/* Nav inferior rediseñada */
+.bottom-nav {
+  height: 70px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background: #0d120d;
+  border-top: 1px solid rgba(200,255,0,.08);
+  position: relative;
+}
+.nav-btn {
+  color: #4a5a4a;
+  gap: 2px;
+}
+.nav-btn.active { color: #c8ff00; }
+.nav-btn.active::before {
+  display: none;
+}
+.nav-btn .nav-icon { font-size: 22px; }
+.nav-btn span:last-child { font-size: 10px; letter-spacing: 0; }
+
+/* Botón central verde */
+.nav-btn-center {
+  flex-shrink: 0;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: #c8ff00;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  margin-top: -14px;
+  box-shadow: 0 4px 20px rgba(200,255,0,.4), 0 0 0 4px rgba(200,255,0,.1);
+  transition: all .2s;
+  flex-direction: column;
+  gap: 0;
+  font-family: var(--fb);
+  position: relative;
+}
+.nav-btn-center:active { transform: scale(.93); }
+
+/* Hero card del equipo */
+.team-hero-card {
+  background: #0d120d;
+  border: 1px solid rgba(200,255,0,.12);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.team-hero-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(200,255,0,.04), transparent 60%);
+  pointer-events: none;
+}
+.team-shield {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: rgba(200,255,0,.08);
+  border: 1.5px solid rgba(200,255,0,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+}
+.team-info { flex: 1; min-width: 0; }
+.team-name {
+  font-family: var(--fd);
+  font-size: 22px; font-weight: 900;
+  color: var(--tx); margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.team-slogan { font-size: 12px; color: var(--tx2); }
+.live-badge {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(200,255,0,.1);
+  border: 1px solid rgba(200,255,0,.25);
+  border-radius: 20px; padding: 5px 10px;
+  font-size: 11px; font-weight: 700; color: #c8ff00;
+  flex-shrink: 0;
+}
+.live-badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #c8ff00; box-shadow: 0 0 6px #c8ff00;
+  animation: livepulse 1.5s infinite;
+}
+@keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* Stats fila del mockup */
+.mockup-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.mockup-stat {
+  background: #0d120d;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.mockup-stat-icon { font-size: 16px; margin-bottom: 4px; }
+.mockup-stat-num {
+  font-family: var(--fd);
+  font-size: 26px; font-weight: 900; line-height: 1;
+  margin-bottom: 2px;
+}
+.mockup-stat-lbl {
+  font-size: 9px; color: var(--tx3);
+  font-weight: 600; text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+/* Quick actions row */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+.quick-actions::-webkit-scrollbar { display: none; }
+.qa-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  background: #0d120d;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px;
+  padding: 12px 16px;
+  cursor: pointer; flex-shrink: 0;
+  transition: all .15s;
+  font-family: var(--fb);
+}
+.qa-btn:active { transform: scale(.96); background: #131a13; }
+.qa-btn.qa-center {
+  background: #c8ff00;
+  border-color: #c8ff00;
+  box-shadow: 0 4px 16px rgba(200,255,0,.3);
+}
+.qa-icon { font-size: 22px; }
+.qa-lbl {
+  font-size: 10px; font-weight: 600;
+  color: var(--tx2); white-space: nowrap;
+  letter-spacing: .2px;
+}
+.qa-btn.qa-center .qa-lbl { color: #000; font-weight: 700; }
+
+/* Próximo partido card */
+.next-match-card {
+  background: #0d120d;
+  border: 1px solid rgba(200,255,0,.1);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative; overflow: hidden;
+}
+.next-match-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #c8ff00, transparent);
+}
+.next-match-label {
+  font-size: 10px; font-weight: 700;
+  color: #c8ff00; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 6px;
+}
+.next-match-date {
+  font-family: var(--fd);
+  font-size: 28px; font-weight: 900;
+  color: var(--tx); margin-bottom: 14px;
+}
+.match-vs {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.match-team-side { text-align: center; flex: 1; }
+.match-team-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(200,255,0,.08);
+  border: 1.5px solid rgba(200,255,0,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin: 0 auto 6px;
+}
+.match-team-name { font-size: 11px; font-weight: 600; color: var(--tx); }
+.match-vs-text {
+  font-family: var(--fd); font-size: 16px; font-weight: 800;
+  color: var(--tx3);
+}
+.match-detail-btn {
+  width: 100%; margin-top: 14px;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(200,255,0,.15);
+  border-radius: 10px;
+  color: #c8ff00;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: var(--fb);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+/* Activity feed */
+.activity-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #131a13;
+  border: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.activity-text { flex: 1; min-width: 0; }
+.activity-title {
+  font-size: 13px; font-weight: 600; color: var(--tx);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.activity-time { font-size: 11px; color: var(--tx3); margin-top: 1px; }
+.activity-arrow { color: var(--tx3); font-size: 14px; }
+
+/* Section headers */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.section-header-title {
+  font-family: var(--fd); font-size: 16px; font-weight: 800;
+  color: var(--tx); text-transform: uppercase; letter-spacing: .5px;
+}
+.section-header-link {
+  font-size: 12px; font-weight: 600;
+  color: #c8ff00; cursor: pointer;
+}
+
+/* Player items mejorados */
+.player-item {
+  border-radius: 16px;
+  background: #0d120d;
+}
+.player-item:active { background: #131a13; }
+
+/* Rank rows mejorados */
+.rank-row { background: #0d120d; border-radius: 16px; }
+
+/* Cards generales */
+.card { background: #0d120d; border-color: rgba(255,255,255,.06); }
+.stat-card { background: #0d120d; border-color: rgba(255,255,255,.06); }
+
+/* Chips más redondeados */
+.chip { border-radius: 22px; }
+.chip.active { 
+  background: rgba(200,255,0,.1); 
+  border-color: rgba(200,255,0,.35); 
+  color: #c8ff00; 
+}
+
+/* Alerts */
+.alert-info { background: rgba(200,255,0,.06); border-color: rgba(200,255,0,.15); }
+.alert-ok   { background: rgba(200,255,0,.06); border-color: rgba(200,255,0,.15); }
+
+/* FAB mejorado */
+.fab { box-shadow: 0 4px 24px rgba(200,255,0,.4); }
+
+/* Badges más nítidos */
+.badge-ok { background: rgba(200,255,0,.1); color: #c8ff00; border-color: rgba(200,255,0,.2); }
+
+/* Modales más oscuros */
+.modal-sheet { background: #0d120d; }
+
+/* Sección title */
+.section-title { font-size: 18px; }
+.section-title .dot { background: #c8ff00; box-shadow: 0 0 8px #c8ff00; }
+</style>
 </head>
 <body>
 
@@ -40,33 +318,75 @@
 
 <!-- HOME -->
 <div class="page active" id="page-home">
-  <div style="background:var(--bg2);border:1px solid var(--b);border-radius:24px;overflow:hidden;margin-bottom:16px;position:relative">
-    <div style="position:absolute;top:-50px;right:-50px;width:160px;height:160px;background:radial-gradient(circle,rgba(200,255,0,.06),transparent 70%);pointer-events:none"></div>
-    <div style="padding:22px 18px 18px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <div style="width:46px;height:46px;border-radius:14px;background:rgba(200,255,0,.08);border:1px solid rgba(200,255,0,.18);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⚽</div>
-        <div style="flex:1;min-width:0">
-          <div id="home-peña-name" style="font-family:var(--fd);font-size:24px;font-weight:900;letter-spacing:-.3px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">MI PEÑA</div>
-          <div id="home-meta" style="font-size:12px;color:var(--tx3);margin-top:1px">Cargando...</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ac);background:rgba(200,255,0,.06);border:1px solid rgba(200,255,0,.12);border-radius:20px;padding:4px 9px;flex-shrink:0">
-          <span class="live-dot"></span> LIVE
-        </div>
-      </div>
-      <div id="home-bday"></div>
-      <div id="home-conv-alert"></div>
-      <div id="home-mvp"></div>
-      <div id="home-active"></div>
+
+  <!-- Hero card equipo -->
+  <div class="team-hero-card">
+    <div class="team-shield">⚽</div>
+    <div class="team-info">
+      <div class="team-name" id="home-peña-name">MI PEÑA</div>
+      <div class="team-slogan" id="home-meta">Cargando...</div>
+    </div>
+    <div class="live-badge"><span class="live-badge-dot"></span>LIVE</div>
+  </div>
+
+  <!-- Stats 4 columnas -->
+  <div class="mockup-stats" id="home-stats">
+    <div class="mockup-stat"><div class="mockup-stat-icon">👥</div><div class="mockup-stat-num" style="color:#c8ff00">0</div><div class="mockup-stat-lbl">Jugadores</div></div>
+    <div class="mockup-stat"><div class="mockup-stat-icon">⚽</div><div class="mockup-stat-num" style="color:#ffd600">0</div><div class="mockup-stat-lbl">Partidos</div></div>
+    <div class="mockup-stat"><div class="mockup-stat-icon">✅</div><div class="mockup-stat-num" style="color:#00e676">0</div><div class="mockup-stat-lbl">Pagados</div></div>
+    <div class="mockup-stat"><div class="mockup-stat-icon">⏰</div><div class="mockup-stat-num" style="color:#ff1744">0</div><div class="mockup-stat-lbl">Pendientes</div></div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="quick-actions">
+    <button class="qa-btn" onclick="showPage('convocatoria',null);closeM('modal-more')">
+      <span class="qa-icon">📢</span><span class="qa-lbl">Convocat.</span>
+    </button>
+    <button class="qa-btn" onclick="showPage('partidos',null)">
+      <span class="qa-icon">📅</span><span class="qa-lbl">Partidos</span>
+    </button>
+    <button class="qa-btn qa-center" onclick="showPage('partidos',null)">
+      <span class="qa-icon">➕</span><span class="qa-lbl">Nuevo</span>
+    </button>
+    <button class="qa-btn" onclick="showPage('caja',null)">
+      <span class="qa-icon">💰</span><span class="qa-lbl">Pagos</span>
+    </button>
+    <button class="qa-btn" onclick="showPage('chat',null)">
+      <span class="qa-icon">💬</span><span class="qa-lbl">Chat</span>
+    </button>
+  </div>
+
+  <!-- Alertas -->
+  <div id="home-bday"></div>
+  <div id="home-conv-alert"></div>
+  <div id="home-mvp"></div>
+  <div id="home-active"></div>
+
+  <!-- Próximo evento -->
+  <div id="home-next-event"></div>
+
+  <!-- Actividad reciente -->
+  <div id="home-pending-wrap">
+    <div class="section-header">
+      <div class="section-header-title">Pagos pendientes</div>
+      <div class="section-header-link" onclick="showPage('caja',null)">Ver todos →</div>
+    </div>
+    <div class="next-match-card" style="padding:12px">
+      <div id="home-pending"></div>
     </div>
   </div>
-  <div class="stats-grid" id="home-stats"></div>
-  <div class="section-title"><div class="dot"></div>Próximo Evento</div>
-  <div id="home-next-event"></div>
-  <div class="section-title"><div class="dot"></div>Noticias</div>
-  <div id="home-news"></div>
-  <div class="section-title"><div class="dot"></div>Pagos Pendientes</div>
-  <div id="home-pending"></div>
+
+  <!-- Noticias -->
+  <div style="margin-top:12px">
+    <div class="section-header">
+      <div class="section-header-title">Noticias</div>
+      <div class="section-header-link" onclick="showPage('noticias',null)">Ver todas →</div>
+    </div>
+    <div id="home-news"></div>
+  </div>
+
 </div>
+
 
 <!-- JUGADORES -->
 <div class="page" id="page-jugadores">
@@ -248,9 +568,11 @@
 <!-- NAV -->
 <nav class="bottom-nav">
   <button class="nav-btn active" onclick="showPage('home',this)"><span class="nav-icon">🏠</span><span>Inicio</span></button>
-  <button class="nav-btn" onclick="showPage('jugadores',this)"><span class="nav-icon">👥</span><span>Jugadores</span></button>
-  <button class="nav-btn" onclick="showPage('partidos',this)"><span class="nav-icon">⚽</span><span>Partidos</span></button>
   <button class="nav-btn" onclick="showPage('ranking',this)"><span class="nav-icon">🏆</span><span>Ranking</span></button>
+  <button class="nav-btn-center" onclick="showPage('partidos',document.querySelector('.nav-btn-center'))">
+    ⚽
+  </button>
+  <button class="nav-btn" onclick="showPage('jugadores',this)"><span class="nav-icon">👥</span><span>Equipo</span></button>
   <button class="nav-btn" onclick="openM('modal-more')"><span class="nav-icon">☰</span><span>Más</span></button>
 </nav>
 
@@ -869,7 +1191,11 @@ function streakBadge(s){
 // ── HOME ───────────────────────────────────────────────
 function renderHome(){
   if(!Object.keys(S.players).length&&!Object.keys(S.matches).length){
-    el('home-stats')&&(el('home-stats').innerHTML=skeletonCards(4));
+    el('home-stats')&&(el('home-stats').innerHTML=`
+    <div class="mockup-stat skeleton" style="height:80px"></div>
+    <div class="mockup-stat skeleton" style="height:80px"></div>
+    <div class="mockup-stat skeleton" style="height:80px"></div>
+    <div class="mockup-stat skeleton" style="height:80px"></div>`);
     el('home-pending')&&(el('home-pending').innerHTML=skeletonCards(3));
   }
   const players=pArr(), matches=mArr();
@@ -880,10 +1206,10 @@ function renderHome(){
   const freqLabel = {1:'mes',3:'trimestre',6:'semestre',12:'año'}[S.config.frecuencia||1]||'mes';
   el('home-meta').textContent=`${players.length} jugadores · Cuota ${S.config.cuota||20}€/${freqLabel}`;
   el('home-stats').innerHTML=`
-    <div class="stat-card"><div class="sv" style="color:#00ff88">${pagados}</div><div class="sl">Pagados</div></div>
-    <div class="stat-card"><div class="sv" style="color:#ff4757">${pendientes}</div><div class="sl">Pendientes</div></div>
-    <div class="stat-card"><div class="sv" style="color:#ffd700">${players.length}</div><div class="sl">Jugadores</div></div>
-    <div class="stat-card"><div class="sv" style="color:#c8ff00">${matches.length}</div><div class="sl">Partidos</div></div>`;
+    <div class="mockup-stat"><div class="mockup-stat-icon">👥</div><div class="mockup-stat-num" style="color:#c8ff00">${players.length}</div><div class="mockup-stat-lbl">Jugadores</div></div>
+    <div class="mockup-stat"><div class="mockup-stat-icon">⚽</div><div class="mockup-stat-num" style="color:#ffd600">${matches.length}</div><div class="mockup-stat-lbl">Partidos</div></div>
+    <div class="mockup-stat"><div class="mockup-stat-icon">✅</div><div class="mockup-stat-num" style="color:#00e676">${pagados}</div><div class="mockup-stat-lbl">Pagados</div></div>
+    <div class="mockup-stat"><div class="mockup-stat-icon">⏰</div><div class="mockup-stat-num" style="color:#ff1744">${pendientes}</div><div class="mockup-stat-lbl">Pendientes</div></div>`;
 
   // Cumpleaños hoy
   const today=new Date();const todayMD=`${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
@@ -894,7 +1220,7 @@ function renderHome(){
   const now=new Date();
   const upcoming=S.events.filter(e=>new Date(e.date+'T12:00:00')>=now).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const ne=upcoming[0];
-  el('home-next-event').innerHTML=ne?`<div class="ev-card">
+  el('home-next-event').innerHTML=ne?`<div class="next-match-card">
     <div style="font-size:11px;color:var(--tx3);text-transform:uppercase;font-weight:600;letter-spacing:.5px">Próximo Evento</div>
     <div style="font-family:var(--fd);font-size:22px;margin:4px 0">${ne.emoji||'📅'} ${ne.title}</div>
     <div style="font-size:12px;color:var(--tx3)">${fDate(ne.date)}${ne.lugar?' · 📍'+ne.lugar:''}</div>
